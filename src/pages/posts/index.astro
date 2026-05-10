@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPostPermalink, getPosts } from '../../lib/wpgraphql';
+
+const posts = await getPosts();
+---
+
+<BaseLayout title="Posts | Joseph Chekanoff" description="Posts by Joseph Chekanoff.">
+  <h1>Posts</h1>
+
+  <label class="sr-only" for="post-search">Search posts</label>
+  <input id="post-search" class="search-input" type="search" placeholder="Search by title, excerpt, or date" autocomplete="off" />
+  <p id="search-count" class="search-count" aria-live="polite">Showing {posts.length} posts.</p>
+
+  <ul class="post-list" id="post-list">
+    {
+      posts.map((post) => (
+        <li
+          class="post-card"
+          data-search={`${post.title} ${post.excerpt} ${new Date(post.date).toLocaleDateString('en', { dateStyle: 'long' })}`.replace(/<[^>]*>/g, '').toLowerCase()}
+        >
+          <article>
+            <time datetime={post.date}>{new Date(post.date).toLocaleDateString('en', { dateStyle: 'long' })}</time>
+            <h2><a href={getPostPermalink(post)} set:html={post.title} /></h2>
+            <div set:html={post.excerpt} />
+          </article>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p id="no-results" class="no-results" hidden>No posts match that search.</p>
+
+  <script>
+    const input = document.querySelector<HTMLInputElement>('#post-search');
+    const posts = Array.from(document.querySelectorAll<HTMLLIElement>('#post-list > li'));
+    const count = document.querySelector<HTMLParagraphElement>('#search-count');
+    const noResults = document.querySelector<HTMLParagraphElement>('#no-results');
+
+    input?.addEventListener('input', () => {
+      const query = input.value.trim().toLowerCase();
+      let visiblePosts = 0;
+
+      for (const post of posts) {
+        const isMatch = post.dataset.search?.includes(query) ?? false;
+        post.hidden = !isMatch;
+
+        if (isMatch) {
+          visiblePosts += 1;
+        }
+      }
+
+      if (count) {
+        count.textContent = `Showing ${visiblePosts} ${visiblePosts === 1 ? 'post' : 'posts'}.`;
+      }
+
+      if (noResults) {
+        noResults.hidden = visiblePosts !== 0;
+      }
+    });
+  </script>
+</BaseLayout>

@@ -1,0 +1,538 @@
+---
+type Props = {
+  title: string;
+  description?: string;
+  image?: {
+    url: string;
+    alt?: string;
+    width?: number;
+    height?: number;
+  } | null;
+  type?: 'website' | 'article';
+};
+
+const { title, description = 'Personal blog of Joseph Chekanoff.', image = null, type = 'website' } = Astro.props;
+const year = new Date().getFullYear();
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? 'https://josephchekanoff.com').toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Joseph Chekanoff" />
+    {image?.url && <meta property="og:image" content={image.url} />}
+    {image?.alt && <meta property="og:image:alt" content={image.alt} />}
+    {image?.width && <meta property="og:image:width" content={String(image.width)} />}
+    {image?.height && <meta property="og:image:height" content={String(image.height)} />}
+    <meta name="twitter:card" content={image?.url ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {image?.url && <meta name="twitter:image" content={image.url} />}
+    <link rel="preload" href="https://chek.co/wp-content/themes/twentytwentyfive/assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="https://chek.co/wp-content/themes/twentytwentyfive/assets/fonts/vollkorn/Vollkorn-VariableFont_wght.woff2" as="font" type="font/woff2" crossorigin />
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="/" class="site-title" aria-label="Home">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10.5358 3.44371C10.9188 3.28599 11.1014 2.84765 10.9437 2.46463C10.786 2.08162 10.3476 1.89898 9.96463 2.05669L3.5 4.7186V3.75C3.5 3.33579 3.16421 3 2.75 3C2.33579 3 2 3.33579 2 3.75V5.33624L1.46463 5.55669C1.08162 5.7144 0.898977 6.15274 1.05669 6.53576C1.20951 6.9069 1.62585 7.0899 2 6.95739V12.5H1.75C1.33579 12.5 1 12.8358 1 13.25C1 13.6642 1.33579 14 1.75 14H4C4.55228 14 5 13.5523 5 13V12C5 11.4477 5.44772 11 6 11C6.55228 11 7 11.4477 7 12V13C7 13.5523 7.44772 14 8 14H9C9.55228 14 10 13.5523 10 13V3.66431L10.5358 3.44371Z" fill="currentColor" />
+          <path d="M11.8285 5.80164C11.6206 5.94087 11.4958 6.1746 11.4958 6.42481V8.5C11.4958 8.52688 11.4972 8.55344 11.5 8.57959V13C11.5 13.5523 11.9477 14 12.5 14H13C13.5523 14 14 13.5523 14 13V7.95717C14.3742 8.08968 14.7905 7.90668 14.9433 7.53554C15.101 7.15252 14.9184 6.71418 14.5354 6.55647L12.5314 5.7313C12.3 5.63603 12.0364 5.66242 11.8285 5.80164Z" fill="currentColor" />
+        </svg>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="/projects/">Projects</a>
+        <a href="/posts/">Posts</a>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>&copy; {year} Joseph Chekanoff. <a href="/acknowledgements/">Acknowledgements</a>.</p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  @font-face {
+    font-family: "Fira Code";
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: fallback;
+    src: url("https://chek.co/wp-content/themes/twentytwentyfive/assets/fonts/fira-code/FiraCode-VariableFont_wght.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: Vollkorn;
+    font-style: normal;
+    font-weight: 400 900;
+    font-display: fallback;
+    src: url("https://chek.co/wp-content/themes/twentytwentyfive/assets/fonts/vollkorn/Vollkorn-VariableFont_wght.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: Vollkorn;
+    font-style: italic;
+    font-weight: 400 900;
+    font-display: fallback;
+    src: url("https://chek.co/wp-content/themes/twentytwentyfive/assets/fonts/vollkorn/Vollkorn-Italic-VariableFont_wght.woff2") format("woff2");
+  }
+
+  :root {
+    color-scheme: light dark;
+    --color-base: #fbfaf6;
+    --color-contrast: #181716;
+    --color-muted: #5f5a54;
+    --color-rule: #18171633;
+    --syntax-comment: #6a737d;
+    --syntax-punctuation: #24292e;
+    --syntax-blue: #005cc5;
+    --syntax-cyan: #032f62;
+    --syntax-red: #d73a49;
+    --syntax-purple: #6f42c1;
+    --syntax-orange: #e36209;
+    --content-size: 645px;
+    --wide-size: 1340px;
+    --space-20: 10px;
+    --space-30: 20px;
+    --space-40: 30px;
+    --space-50: clamp(30px, 5vw, 50px);
+    --space-60: clamp(30px, 7vw, 70px);
+    --space-80: clamp(70px, 10vw, 140px);
+    font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background: var(--color-base);
+    color: var(--color-contrast);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-base: #131313;
+      --color-contrast: #ffffff;
+      --color-muted: #ffffffb3;
+      --color-rule: #ffffff33;
+      --syntax-comment: #8b949e;
+      --syntax-punctuation: #c9d1d9;
+      --syntax-blue: #79c0ff;
+      --syntax-cyan: #a5d6ff;
+      --syntax-red: #ff7b72;
+      --syntax-purple: #d2a8ff;
+      --syntax-orange: #ffa657;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-size: clamp(1rem, 1rem + ((1vw - 0.2rem) * 0.196), 1.125rem);
+    font-weight: 300;
+    letter-spacing: -0.18px;
+    line-height: 1.5;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.1em;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+
+  .site-header,
+  .site-footer,
+  main {
+    width: min(100% - (var(--space-50) * 2), var(--content-size));
+    margin-inline: auto;
+  }
+
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: var(--space-50) 0;
+  }
+
+  .site-title {
+    display: inline-flex;
+    align-items: center;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .site-title svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    font-size: 0.875rem;
+  }
+
+  main {
+    padding-block: var(--space-60);
+  }
+
+  .site-footer {
+    padding-block: 0 var(--space-50);
+    color: var(--color-muted);
+    font-size: 0.875rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: Vollkorn, Georgia, serif;
+    font-weight: 400;
+    line-height: 1.05;
+    text-wrap: pretty;
+  }
+
+  h1 {
+    margin: 0 0 var(--space-30);
+    font-size: clamp(27.894px, 1.743rem + ((1vw - 3.2px) * 1.971), 48px);
+    letter-spacing: -0.96px;
+  }
+
+  h2 {
+    font-size: clamp(23.043px, 1.44rem + ((1vw - 3.2px) * 1.466), 38px);
+    letter-spacing: -0.96px;
+  }
+
+  h3 {
+    font-size: clamp(20px, 1.25rem + ((1vw - 3.2px) * 1.176), 32px);
+    letter-spacing: -0.64px;
+  }
+
+  h4 {
+    font-size: clamp(17.905px, 1.119rem + ((1vw - 3.2px) * 0.99), 28px);
+    letter-spacing: -0.56px;
+  }
+
+  h5 {
+    font-size: clamp(15.747px, 0.984rem + ((1vw - 3.2px) * 0.809), 24px);
+    letter-spacing: -0.48px;
+  }
+
+  h6 {
+    font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+  }
+
+  p,
+  li {
+    line-height: 1.5;
+    text-wrap: pretty;
+  }
+
+  :not(pre) > code {
+    border-radius: 0.25rem;
+    padding: 0.2em 0.4em;
+    background: color-mix(in srgb, var(--color-contrast) 10%, transparent);
+    font-size: 0.85em;
+  }
+
+  pre {
+    overflow-x: auto;
+    border: 1px solid var(--color-rule);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    background: color-mix(in srgb, var(--color-contrast) 7%, transparent);
+    line-height: 1.55;
+  }
+
+  pre[class*="pre-"] {
+    border-color: color-mix(in srgb, var(--color-contrast) 26%, transparent);
+  }
+
+  pre code {
+    display: block;
+    min-width: max-content;
+    padding: 0;
+    background: transparent;
+    font-size: 0.875rem;
+    white-space: pre;
+  }
+
+  .token.comment,
+  .token.prolog,
+  .token.doctype,
+  .token.cdata {
+    color: var(--syntax-comment);
+  }
+
+  .token.punctuation {
+    color: var(--syntax-punctuation);
+  }
+
+  .token.property,
+  .token.tag,
+  .token.boolean,
+  .token.number,
+  .token.null,
+  .token.constant,
+  .token.symbol,
+  .token.deleted {
+    color: var(--syntax-blue);
+  }
+
+  .token.selector,
+  .token.attr-name,
+  .token.string,
+  .token.char,
+  .token.builtin,
+  .token.inserted {
+    color: var(--syntax-cyan);
+  }
+
+  .token.operator,
+  .token.entity,
+  .token.url,
+  .language-css .token.string,
+  .style .token.string {
+    color: var(--syntax-red);
+  }
+
+  .token.atrule,
+  .token.attr-value,
+  .token.keyword {
+    color: var(--syntax-red);
+  }
+
+  .token.function,
+  .token.class-name {
+    color: var(--syntax-purple);
+  }
+
+  .token.regex,
+  .token.important,
+  .token.variable {
+    color: var(--syntax-orange);
+  }
+
+  ul {
+    padding-inline-start: 20px;
+  }
+
+  ol {
+    padding-inline-start: 24px;
+  }
+
+  blockquote {
+    margin-inline: 0;
+    border-left: 1px solid var(--color-rule);
+    padding-inline-start: var(--space-30);
+    color: var(--color-muted);
+  }
+
+  blockquote cite {
+    display: block;
+    margin-block-start: var(--space-20);
+    font-size: 0.875rem;
+    font-style: normal;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--color-rule);
+    margin-block: var(--space-50);
+  }
+
+  figure {
+    margin-inline: 0;
+  }
+
+  figcaption {
+    margin-block-start: var(--space-20);
+    color: var(--color-muted);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  table {
+    display: block;
+    overflow-x: auto;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid var(--color-rule);
+    padding: 0.65rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    font-weight: 700;
+  }
+
+  details {
+    border-block: 1px solid var(--color-rule);
+    padding-block: var(--space-20);
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .lede {
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  .post-list {
+    display: grid;
+    gap: var(--space-30);
+    margin: var(--space-60) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .post-card {
+    padding-block-start: 0;
+  }
+
+  .post-card[hidden] {
+    display: none;
+  }
+
+  .post-card h2 {
+    margin: 0;
+    font-size: clamp(1.125rem, 1rem + 1vw, 1.5rem);
+    letter-spacing: -0.48px;
+    line-height: 1.125;
+  }
+
+  time {
+    display: block;
+    margin-bottom: var(--space-20);
+    font-size: 0.875rem;
+    color: var(--color-muted);
+  }
+
+  .term-list {
+    color: var(--color-muted);
+    font-size: 0.875rem;
+  }
+
+  .post-categories {
+    margin-block: calc(var(--space-20) * -1) var(--space-40);
+  }
+
+  .post-footer {
+    margin-block-start: var(--space-60);
+    padding-block-start: var(--space-30);
+    border-top: 1px solid var(--color-rule);
+  }
+
+  .not-found {
+    padding-block: var(--space-40);
+  }
+
+  .not-found-kicker,
+  .not-found-links {
+    color: var(--color-muted);
+    font-size: 0.875rem;
+  }
+
+  .not-found-links {
+    margin-block-start: var(--space-40);
+  }
+
+  .search-label {
+    display: block;
+    margin-block-start: var(--space-40);
+    font-size: 0.875rem;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .search-input {
+    width: 100%;
+    margin-block-start: var(--space-40);
+    border: 1px solid var(--color-rule);
+    border-radius: 0;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+
+  .search-input::placeholder {
+    color: var(--color-muted);
+  }
+
+  .search-count,
+  .no-results {
+    color: var(--color-muted);
+    font-size: 0.875rem;
+  }
+
+  .archive-back {
+    margin-block: 0 var(--space-20);
+    color: var(--color-muted);
+    font-size: 0.875rem;
+  }
+
+  article > * + * {
+    margin-block-start: 1.2rem;
+  }
+
+  article :where(img, iframe) {
+    max-width: 100%;
+  }
+
+  article :where(img) {
+    height: auto;
+  }
+
+  :focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 520px) {
+    .site-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>

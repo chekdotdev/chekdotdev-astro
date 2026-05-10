@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { highlightCodeBlocks } from '../lib/code-highlighting';
+import { getMetaDescription, getOpenGraphImage, getPageByUri, getPages, stripHtml } from '../lib/wpgraphql';
+
+export async function getStaticPaths() {
+  const pages = await getPages();
+
+  return pages
+    .filter((page) => page.uri !== '/')
+    .map((page) => ({
+      params: { uri: page.uri.replace(/^\/+|\/+$/g, '') },
+      props: { page },
+    }));
+}
+
+const page = await getPageByUri(`/${Astro.params.uri ?? ''}/`);
+
+if (!page) {
+  return Astro.redirect('/404');
+}
+
+const title = `${stripHtml(page.title)} | Joseph Chekanoff`;
+const content = highlightCodeBlocks(page.content);
+---
+
+<BaseLayout title={title} description={getMetaDescription(page.content)} image={getOpenGraphImage(page.featuredImage)}>
+  <article>
+    <h1 set:html={page.title} />
+    <div set:html={content} />
+  </article>
+</BaseLayout>

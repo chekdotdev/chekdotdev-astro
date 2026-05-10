@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPostPermalink, getPostsByTag, getTags } from '../../lib/wpgraphql';
+
+export async function getStaticPaths() {
+  const tags = await getTags();
+
+  return tags.map((tag) => ({
+    params: { slug: tag.slug },
+    props: { tag },
+  }));
+}
+
+const { tag } = Astro.props;
+const posts = await getPostsByTag(tag.slug);
+---
+
+<BaseLayout title={`${tag.name} | Joseph Chekanoff`} description={`Posts tagged ${tag.name}.`}>
+  <p class="archive-back"><a href="/posts/">← All posts</a></p>
+  <h1>{tag.name}</h1>
+  <ul class="post-list">
+    {
+      posts.map((post) => (
+        <li class="post-card">
+          <article>
+            <time datetime={post.date}>{new Date(post.date).toLocaleDateString('en', { dateStyle: 'long' })}</time>
+            <h2><a href={getPostPermalink(post)} set:html={post.title} /></h2>
+            <div set:html={post.excerpt} />
+          </article>
+        </li>
+      ))
+    }
+  </ul>
+</BaseLayout>

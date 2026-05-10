@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { highlightCodeBlocks } from '../../lib/code-highlighting';
+import { getCategoryPermalink, getMetaDescription, getOpenGraphImage, getPostBySlug, getPosts, getTagPermalink, getVisibleCategories, stripHtml } from '../../lib/wpgraphql';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+
+  return posts.map((post) => ({
+    params: { date: post.date.slice(0, 10), slug: post.slug },
+  }));
+}
+
+const post = await getPostBySlug(Astro.params.slug as string);
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+const categories = getVisibleCategories(post.categories.nodes);
+const title = `${stripHtml(post.title)} | Joseph Chekanoff`;
+const content = highlightCodeBlocks(post.content);
+---
+
+<BaseLayout title={title} description={getMetaDescription(post.excerpt)} image={getOpenGraphImage(post.featuredImage)} type="article">
+  <article>
+    <time datetime={post.date}>{new Date(post.date).toLocaleDateString('en', { dateStyle: 'long' })}</time>
+    <h1 set:html={post.title} />
+    {categories.length > 0 && (
+      <p class="term-list post-categories" aria-label="Categories">
+        {categories.map((category, index) => (
+          <>
+            <a href={getCategoryPermalink(category)}>{category.name}</a>{index < categories.length - 1 && ', '}
+          </>
+        ))}
+      </p>
+    )}
+    <div set:html={content} />
+    {post.tags.nodes.length > 0 && (
+      <footer class="post-footer">
+        <p class="term-list" aria-label="Tags">
+          Tagged{' '}
+          {post.tags.nodes.map((tag, index) => (
+            <>
+              <a href={getTagPermalink(tag)}>{tag.name}</a>{index < post.tags.nodes.length - 1 && ', '}
+            </>
+          ))}
+        </p>
+      </footer>
+    )}
+  </article>
+</BaseLayout>
