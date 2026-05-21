@@ -27,7 +27,7 @@ const content = highlightCodeBlocks(post.content);
     <time datetime={post.date}>{new Date(post.date).toLocaleDateString('en', { dateStyle: 'long' })}</time>
     <h1 set:html={post.title} />
     {categories.length > 0 && (
-      <p class="term-list post-categories" aria-label="Categories">
+      <p class="term-list post-categories" role="group" aria-label="Categories">
         {categories.map((category, index) => (
           <>
             <a href={getCategoryPermalink(category)}>{category.name}</a>{index < categories.length - 1 && ', '}
@@ -38,7 +38,7 @@ const content = highlightCodeBlocks(post.content);
     <div set:html={content} />
     {post.tags.nodes.length > 0 && (
       <footer class="post-footer">
-        <p class="term-list" aria-label="Tags">
+        <p class="term-list" role="group" aria-label="Tags">
           Tagged{' '}
           {post.tags.nodes.map((tag, index) => (
             <>
