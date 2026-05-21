@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { highlightCodeBlocks } from '../../lib/code-highlighting';
-import { getCategoryPermalink, getMetaDescription, getOpenGraphImage, getPostBySlug, getPosts, getTagPermalink, getVisibleCategories, stripHtml } from '../../lib/wpgraphql';
+import { getCategoryPermalink, getMetaDescription, getPostBySlug, getPosts, getTagPermalink, getVisibleCategories, stripHtml } from '../../lib/wpgraphql';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -22,7 +22,7 @@ const title = `${stripHtml(post.title)} | Joseph Chekanoff`;
 const content = highlightCodeBlocks(post.content);
 ---
 
-<BaseLayout title={title} description={getMetaDescription(post.excerpt)} image={getOpenGraphImage(post.featuredImage)} type="article">
+<BaseLayout title={title} description={getMetaDescription(post.excerpt)} image={{ url: new URL(`/og/${post.slug}.png`, Astro.site).toString(), width: 1200, height: 630 }} type="article">
   <article>
     <time datetime={post.date}>{new Date(post.date).toLocaleDateString('en', { dateStyle: 'long' })}</time>
     <h1 set:html={post.title} />
