@@ -22,7 +22,7 @@ const title = `${stripHtml(post.title)} | Joseph Chekanoff`;
 const content = highlightCodeBlocks(post.content);
 ---
 
-<BaseLayout title={title} description={getMetaDescription(post.excerpt)} image={{ url: new URL(`/og/${post.slug}.png`, Astro.site).toString(), width: 1200, height: 630 }} type="article">
+<BaseLayout title={title} description={getMetaDescription(post.excerpt)} image={{ url: new URL(`/og/${post.slug}.png`, Astro.site).toString(), width: 1200, height: 630 }} type="article" publishedTime={post.date}>
   <article>
     <time datetime={post.date}>{new Date(post.date).toLocaleDateString('en', { dateStyle: 'long' })}</time>
     <h1 set:html={post.title} />

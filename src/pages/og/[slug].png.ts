@@ -115,6 +115,6 @@ export const GET: APIRoute = async ({ props }) => {
     }
   );
 
-  const png = new Resvg(svg).render().asPng();
+  const png = new Resvg(svg, { fitTo: { mode: 'zoom', value: 2 } }).render().asPng();
   return new Response(png, { headers: { 'Content-Type': 'image/png' } });
 };
